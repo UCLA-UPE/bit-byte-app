@@ -32,7 +32,11 @@ python manage.py createsuperuser
 
 Now you can use this to navigate to /admin to log into the admin page.
 
-# Design
+# Design (Below may be outdated)
+
+https://github.com/austinguo550/byteBitWebpageFlowDiagrams
+
+# Technical Design
 
 This project has been laid out in accordance with standard Django practices. Please look at models.py for the data model. For basic Django resources, refer to the documentation, and https://docs.djangoproject.com/en/2.1/intro/tutorial01/ which is very similar to this project.
 
