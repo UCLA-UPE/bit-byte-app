@@ -59,10 +59,9 @@ This project has been laid out in accordance with standard Django practices. Ple
 ```
 
 At a high level:
-1. Profile contains the metadata for each user, and has a one-to-one key to users. This meta data includes whether they are a 
-bit or byte, and their answers to the bit-byte questions (in JSON format).
+1. __Profile__ contains the metadata for each user, and has a one-to-one key to users. This meta data includes whether they are a bit or byte, and their answers to the bit-byte questions (in JSON field), as list of strings. These correspond to the questions in SiteSettings (explained below).
 
-2. Choice contains all the choices of bits and bytes, with two foreign keys designating the "chooser" and "choosee". Suppose user1 chooses user2 and user3. Then this table may contain two entries with foreign keys chooser and choosee as follows:
+2. __Choice__ contains all the choices of bits and bytes, with two foreign keys designating the "chooser" and "choosee". Suppose user1 chooses user2 and user3. Then this table may contain two entries with foreign keys chooser and choosee as follows:
 
 chooser: user1, choosee: user2
 
@@ -70,4 +69,4 @@ chooser: user1, choosee: user3
 
 There's also a "finalized" boolean flag to indicate if this choice is the choice that should be used. The eventual matching algorithm should deal with this.
 
-3. SiteSettings contains all the site specific parameters. These include special keys for bits and bytes, which must be used in order to sign up. The questions for the quarter (which should be the same for bits and bytes), will also be the same.
+3. __SiteSettings__ contains all the site specific parameters. These include special keys for bits and bytes, which must be used in order to sign up. The questions for the quarter (which should be the same for bits and bytes), are also in here, in JSON field, as a list of strings. Each person's answer in the ith index correspond to the question in the ith index.
