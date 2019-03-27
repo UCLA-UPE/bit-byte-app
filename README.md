@@ -4,6 +4,7 @@
 1. Make sure you have docker (with docker-compose installed)
 
 https://docs.docker.com/docker-for-mac/install/
+
 https://docs.docker.com/docker-for-windows/install/
 
 2. Run the following to start server:
