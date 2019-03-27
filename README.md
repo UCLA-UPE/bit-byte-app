@@ -34,7 +34,28 @@ Now you can use this to navigate to /admin to log into the admin page.
 
 # Design
 
-Please look at models.py for the data model.
+This project has been laid out in accordance with standard Django practices. Please look at models.py for the data model. For basic Django resources, refer to the documentation, and https://docs.djangoproject.com/en/2.1/intro/tutorial01/ which is very similar to this project.
+
+.
+├── Dockerfile
+├── bitbyte
+│   ├── __init__.py
+│   ├── settings.py <- Django settings for website
+│   ├── urls.py <- toplevel routing, which will direct / to internal/urls.py
+│   └── wsgi.py
+├── docker-compose.yml
+├── docker-entrypoint.sh
+├── internal
+│   ├── __init__.py
+│   ├── admin.py <- file to register models into admin panel
+│   ├── apps.py
+│   ├── models.py <- data models
+│   ├── tests.py
+│   ├── urls.py <- routing for main app (to connect urls to views)
+│   └── views.py <- views for main app
+├── manage.py <- main entrypoint, which you probably won't need
+└── requirements.txt
+
 
 At a high level:
 1. Profile contains the metadata for each user, and has a one-to-one key to users. This meta data includes whether they are a 
