@@ -36,6 +36,7 @@ Now you can use this to navigate to /admin to log into the admin page.
 
 This project has been laid out in accordance with standard Django practices. Please look at models.py for the data model. For basic Django resources, refer to the documentation, and https://docs.djangoproject.com/en/2.1/intro/tutorial01/ which is very similar to this project.
 
+```
 .
 ├── Dockerfile
 ├── bitbyte
@@ -55,7 +56,7 @@ This project has been laid out in accordance with standard Django practices. Ple
 │   └── views.py <- views for main app
 ├── manage.py <- main entrypoint, which you probably won't need
 └── requirements.txt
-
+```
 
 At a high level:
 1. Profile contains the metadata for each user, and has a one-to-one key to users. This meta data includes whether they are a 
