@@ -15,6 +15,7 @@ def register(request):
 def register_submit(request):
 
     error_message = None
+    site_settings = SiteSettings.load()
 
     # transform
     role = None
@@ -23,12 +24,16 @@ def register_submit(request):
 
     # validate
     if role == None: error_message = "role is invalid."
+    if role == "b" and request.POST['invite'] != site_settings.bit_signup_pass:
+        error_message = "the bit invite code is wrong."
+    if role == "B" and request.POST['invite'] != site_settings.byte_signup_pass:
+        error_message = "the byte invite code is wrong."
     if len(request.POST['username']) < 3: error_message = "username is too short."
     if len(request.POST['password']) < 3: error_message = "password is too short."
     if len(request.POST['first_name']) < 1: error_message = "first name is too short."
     if len(request.POST['last_name']) < 1: error_message = "last name is too short."
     if error_message != None:
-        return render(request, 'internal/registration.html', {'error_message': error_message})
+        return render(request, 'internal/register.html', {'error_message': error_message})
 
     try:
         # create user and profile
@@ -38,13 +43,13 @@ def register_submit(request):
         profile = Profile(user=user, role=role)
     except:
         # generic error
-        return render(request, 'internal/registration.html', {
+        return render(request, 'internal/register.html', {
             'error_message': "Something went bad. Try again, but do it better.",
         })
     else:
         user.save()
         profile.save()
-        return HttpResponse("Success.")
+        return HttpResponse("Success!")
 
 def edit(request):
     return HttpResponse("Hello, world.")
