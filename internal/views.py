@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from internal.models import *
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 # Create your views here.
 def index(request):
@@ -50,6 +51,25 @@ def register_submit(request):
         user.save()
         profile.save()
         return HttpResponse("Success!")
+
+def auth(request):
+    return render(request, 'internal/auth.html')
+
+def auth_submit(request):
+
+    user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
+    if user is not None:
+        login(request, user)
+        return render(request, 'internal/profile.html')
+    else:
+        return render(request, 'internal/auth.html', {
+            'error_message': "Failed to authenticate.",
+        })
+
+def profile(request):
+    if not request.user.is_authenticated:
+        return redirect('%s?next=%s' % ('/login/', request.path))
+    return render(request, 'internal/profile.html')
 
 def edit(request):
     return HttpResponse("Hello, world.")

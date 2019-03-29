@@ -15,22 +15,14 @@
 
             <div class="uk-child-width-1-2@m uk-grid-medium uk-grid-match uk-flex-center" uk-grid>
                 <div><div class="uk-card uk-card-default uk-card-body uk-margin-top">
-                    <form action="{% url 'register_submit' %}" method="post">
+                    <form action="{% url 'auth_submit' %}" method="post">
                     {% csrf_token %}
                     <fieldset class="uk-fieldset">
-                    <legend class="uk-legend">Register</legend>
+                    <legend class="uk-legend">Login</legend>
                     <div class="uk-margin"><input class="uk-input" type="text" placeholder="username" name="username"></div>
                     <div class="uk-margin"><input class="uk-input" type="password" placeholder="password" name="password"></div>
-                    <div class="uk-margin"><input class="uk-input" type="email" placeholder="email" name="email"></div>
-                    <div class="uk-margin"><input class="uk-input" type="text" placeholder="first name" name="first_name"></div>
-                    <div class="uk-margin"><input class="uk-input" type="text" placeholder="last name" name="last_name"></div>
-                    <div class="uk-margin"><select class="uk-select" name="role">
-                        <option>Bit</option>
-                        <option>Byte</option>
-                    </select></div>
-                    <div class="uk-margin"><input class="uk-input" type="text" placeholder="invite code" name="invite"></div>
                     </fieldset>
-                    <input type="submit" value="Sign me up fam">
+                    <input type="submit" value="Get me in">
                     </form>
                 </div></div>
             </div>
