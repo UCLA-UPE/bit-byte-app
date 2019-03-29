@@ -47,7 +47,7 @@ class Profile(models.Model):
     answers = JSONField()
 
     def __str__(self):
-        return self.account.username
+        return self.user.username
 
 class Choice(models.Model):
     chooser = models.ForeignKey(Profile, related_name="chooser", on_delete=models.CASCADE)
