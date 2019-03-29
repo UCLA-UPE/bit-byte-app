@@ -39,12 +39,12 @@ class SiteSettings(SingletonModel):
 class Profile(models.Model):
     ROLE = (
         ('B', 'Byte'),
-        ('b', 'Bite')
+        ('b', 'Bit')
     )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=1, choices=ROLE)
-    answers = JSONField()
+    answers = JSONField(blank=True, default=list)
 
     def __str__(self):
         return self.user.username
