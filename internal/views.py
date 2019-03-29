@@ -2,18 +2,18 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from internal.models import *
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
-def index(request):
+def index_view(request):
     profiles = Profile.objects.all()
     context = {'profiles': profiles}
     return render(request, 'internal/index.html', context)
 
-def register(request):
+def register_view(request):
     return render(request, 'internal/register.html')
 
-def register_submit(request):
+def register_submit_view(request):
 
     error_message = None
     site_settings = SiteSettings.load()
@@ -52,21 +52,24 @@ def register_submit(request):
         profile.save()
         return HttpResponse("Success!")
 
-def auth(request):
-    return render(request, 'internal/auth.html')
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('/profile/')
+    return render(request, 'internal/login_view.html')
 
-def auth_submit(request):
+def login_submit_view(request):
 
     user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
     if user is not None:
         login(request, user)
-        return render(request, 'internal/profile.html')
+        return redirect('/profile/')
+        # return render(request, 'internal/profile.html')
     else:
-        return render(request, 'internal/auth.html', {
+        return render(request, 'internal/login_view.html', {
             'error_message': "Failed to authenticate.",
         })
 
-def profile(request):
+def profile_view(request):
     if not request.user.is_authenticated:
         return redirect('%s?next=%s' % ('/login/', request.path))
     return render(request, 'internal/profile.html')
