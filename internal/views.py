@@ -50,29 +50,34 @@ def register_submit_view(request):
     else:
         user.save()
         profile.save()
-        return HttpResponse("Success!")
+        login(request, user)
+        return redirect('/profile/')
 
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('/profile/')
-    return render(request, 'internal/login_view.html')
+    return render(request, 'internal/login.html')
 
 def login_submit_view(request):
-
     user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
     if user is not None:
         login(request, user)
         return redirect('/profile/')
-        # return render(request, 'internal/profile.html')
-    else:
-        return render(request, 'internal/login_view.html', {
-            'error_message': "Failed to authenticate.",
-        })
+    return render(request, 'internal/login.html', {
+        'error_message': "Failed to authenticate.",
+    })
+
+def logout_view(request):
+    logout(request)
+    return redirect('/login/')
 
 def profile_view(request):
     if not request.user.is_authenticated:
         return redirect('%s?next=%s' % ('/login/', request.path))
-    return render(request, 'internal/profile.html')
+
+    context = {'profile': Profile.objects.get(user=request.user),
+               'user': request.user}
+    return render(request, 'internal/profile.html', context)
 
 def edit(request):
     return HttpResponse("Hello, world.")
