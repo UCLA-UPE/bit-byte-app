@@ -9,26 +9,39 @@ def index(request):
     context = {'profiles': profiles}
     return render(request, 'internal/index.html', context)
 
-def registration(request):
-    return render(request, 'internal/registration.html')
-
 def register(request):
-    # transformations
-    if request.POST['role'] == "Bit": role = "b"
-    elif request.POST['role'] == "Byte": role = "B"
+    return render(request, 'internal/register.html')
 
-    user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
-    user.first_name = request.POST['first_name']
-    user.last_name = request.POST['last_name']
+def register_submit(request):
+    try:
+        # transform
+        role = None
+        if request.POST['role'] == "Bit": role = "b"
+        elif request.POST['role'] == "Byte": role = "B"
 
-    profile = Profile(user=user, role=role)
+        # validate
+        assert role is not None
+        assert len(request.POST['username']) >= 3
+        assert len(request.POST['password']) >= 3
+        assert len(request.POST['first_name']) >= 1
+        assert len(request.POST['last_name']) >= 1
 
-    user.save()
-    profile.save()
+        # create user and profile
+        user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
+        user.first_name = request.POST['first_name']
+        user.last_name = request.POST['last_name']
+        profile = Profile(user=user, role=role)
 
-    return HttpResponse("Success.")
+    except:
+        # generic error
+        return render(request, 'internal/registration.html', {
+            'error_message': "Something went bad. Try again, but do it better.",
+        })
 
-
+    else:
+        user.save()
+        profile.save()
+        return HttpResponse("Success.")
 
 def edit(request):
     return HttpResponse("Hello, world.")
