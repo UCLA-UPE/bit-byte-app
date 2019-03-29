@@ -13,14 +13,20 @@ def registration(request):
     return render(request, 'internal/registration.html')
 
 def register(request):
-    # user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
-    # user.first_name = request.POST['first_name']
-    # user.last_name = request.POST['last_name']
+    # transformations
+    if request.POST['role'] == "Bit": role = "b"
+    elif request.POST['role'] == "Byte": role = "B"
 
-    # profile = Profile.objects.
+    user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
+    user.first_name = request.POST['first_name']
+    user.last_name = request.POST['last_name']
 
-    # user.save()
-    return HttpResponse("Hello, world.")
+    profile = Profile(user=user, role=role)
+
+    user.save()
+    profile.save()
+
+    return HttpResponse("Success.")
 
 
 
