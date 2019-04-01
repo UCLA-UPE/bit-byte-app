@@ -1,39 +1,32 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>UPE Bit-Byte Program 2019</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/css/uikit.min.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/js/uikit.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/js/uikit-icons.min.js"></script>
-    </head>
-    <body>
-        <div class="uk-container uk-container-small">
+{% extends "internal/base.html" %}
 
-            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% block nav-register %}<li class="uk-active"><a href="{% url 'register' %}">Register</a></li>{% endblock %}
 
-            <div class="uk-child-width-1-2@m uk-grid-medium uk-grid-match uk-flex-center" uk-grid>
-                <div><div class="uk-card uk-card-default uk-card-body uk-margin-top">
-                    <form action="{% url 'register_submit' %}" method="post">
-                    {% csrf_token %}
-                    <fieldset class="uk-fieldset">
-                    <legend class="uk-legend">Register</legend>
-                    <div class="uk-margin"><input class="uk-input" type="text" placeholder="username" name="username"></div>
-                    <div class="uk-margin"><input class="uk-input" type="password" placeholder="password" name="password"></div>
-                    <div class="uk-margin"><input class="uk-input" type="email" placeholder="email" name="email"></div>
-                    <div class="uk-margin"><input class="uk-input" type="text" placeholder="first name" name="first_name"></div>
-                    <div class="uk-margin"><input class="uk-input" type="text" placeholder="last name" name="last_name"></div>
-                    <div class="uk-margin"><select class="uk-select" name="role">
-                        <option>Bit</option>
-                        <option>Byte</option>
-                    </select></div>
-                    <div class="uk-margin"><input class="uk-input" type="text" placeholder="invite code" name="invite"></div>
-                    </fieldset>
-                    <input type="submit" value="Sign me up fam">
-                    </form>
-                </div></div>
-            </div>
-        </div>
-    </body>
-</html>
+{% block content %}
+<div class="uk-container uk-container-small">
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+    <div class="uk-child-width-1-2@m uk-grid-medium uk-grid-match uk-flex-center" uk-grid>
+        <div><div class="uk-card uk-card-default uk-card-body uk-margin-top">
+            <form action="{% url 'register_submit' %}" method="post">
+            {% csrf_token %}
+            <fieldset class="uk-fieldset">
+            <legend class="uk-legend">Register</legend>
+            <div class="uk-margin"><input class="uk-input" type="text" placeholder="username" name="username"></div>
+            <div class="uk-margin"><input class="uk-input" type="password" placeholder="password" name="password"></div>
+            <div class="uk-margin"><input class="uk-input" type="email" placeholder="email" name="email"></div>
+            <div class="uk-margin"><input class="uk-input" type="text" placeholder="first name" name="first_name"></div>
+            <div class="uk-margin"><input class="uk-input" type="text" placeholder="last name" name="last_name"></div>
+            <div class="uk-margin"><select class="uk-select" name="role">
+                <option>Bit</option>
+                <option>Byte</option>
+            </select></div>
+            <div class="uk-margin"><input class="uk-input" type="text" placeholder="invite code" name="invite"></div>
+            </fieldset>
+            <input type="submit" value="Sign me up fam">
+            </form>
+        </div></div>
+    </div>
+</div>
+{% endblock %}

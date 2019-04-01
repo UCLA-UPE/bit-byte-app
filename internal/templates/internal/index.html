@@ -1,19 +1,12 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Title</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/css/uikit.min.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/js/uikit.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/js/uikit-icons.min.js"></script>
-    </head>
-    <body>
-        <div class="uk-container uk-container-small">
-            <h1>Profiles</h1>
-            {% for p in profiles %}
-                <li>{{ p.user }}, {{ p.role }}, {{ p.answers }}</li>
-            {% endfor %}
-        </div>
-    </body>
-</html>
+{% extends "internal/base.html" %}
+
+{% block nav-home %}<li class="uk-active"><a href="{% url 'index' %}">Home</a></li>{% endblock %}
+
+{% block content %}
+<div class="uk-container uk-container-small">
+    <h1>Profiles</h1>
+    {% for p in profiles %}
+        <li>{{ p.user }}, {{ p.role }}, {{ p.answers }}</li>
+    {% endfor %}
+</div>
+{% endblock %}
