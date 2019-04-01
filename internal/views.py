@@ -6,6 +6,11 @@ from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 def index_view(request):
+    user = None
+
+    if request.user.is_authenticated and not request.user.is_superuser and not request.user.is_staff:
+        user = request.user
+
     profiles = Profile.objects.all()
     context = {'profiles': profiles}
     return render(request, 'internal/index.html', context)

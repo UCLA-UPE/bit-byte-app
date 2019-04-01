@@ -1,0 +1,33 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title>UPE Bit-Byte Program 2019</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.8/css/uikit.min.css" />
+
+    <!-- UIkit JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.8/js/uikit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.8/js/uikit-icons.min.js"></script>
+  </head>
+  <body>
+    <nav class="uk-navbar-container" uk-navbar>
+      <div class="uk-navbar-right">
+        <ul class="uk-navbar-nav">
+          {% block nav-home %}<li><a href="{% url 'index' %}">Home</a></li>{% endblock %}
+          {% block nav-profile %}<li><a href="{% url 'profile' %}">Profile</a></li>{% endblock %}
+          {% if user.is_authenticated == False %}
+            {% block nav-register %}<li><a href="{% url 'register' %}">Register</a></li>{% endblock %}
+            {% block nav-login %}<li><a href="{% url 'login' %}">Login</a></li>{% endblock %}
+          {% else %}
+            {% block nav-logout %}<li><a href="{% url 'logout' %}">Logout</a></li>{% endblock %}
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+    {% block content %}{% endblock %}
+  </body>
+</html>
