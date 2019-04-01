@@ -47,9 +47,34 @@ class Profile(models.Model):
     answers = JSONField(blank=True, default=list)
 
     def __str__(self):
-        return self.user.username
+        return '%s %s (%s)' % (self.user.first_name, self.user.last_name, self.user.username)
 
 class Choice(models.Model):
     chooser = models.ForeignKey(Profile, related_name="chooser", on_delete=models.CASCADE)
     choosee = models.ForeignKey(Profile, related_name="choosee", on_delete=models.CASCADE)
     final = models.BooleanField("Choice Finalized", default=False)
+
+    def __str__(self):
+        return '%s chose %s (is final: %s)' % (self.chooser, self.choosee, self.final)
+
+class Event(models.Model):
+    name = models.CharField(max_length=200)
+    points = models.IntegerField()
+
+    def __str__(self):
+        return '%s (worth %s points)' % (self.name, self.points)
+
+class EventCheckoff(models.Model):
+    person = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '%s did %s' % (self.person, self.event)
+
+class Team(models.Model):
+    name = models.CharField(max_length=200)
+    byte = models.ForeignKey(Profile, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '%s (%s)' % (self.name, self.byte)
+
