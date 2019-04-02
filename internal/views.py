@@ -97,5 +97,18 @@ def teams_view(request):
     print(teams)
     return render(request, 'internal/teams.html', context)
 
+def events_view(request):
+    teams_raw = Team.objects.all()
+    teams = []
+    for team_raw in teams_raw:
+        team = {'name': team_raw.name, 'points': team_raw.points}
+        members = Profile.objects.filter(team=team_raw)
+        team['byte'] = members.get(role='B')
+        team['bits'] = members.filter(role='b')
+        teams.append(team)
+    context = {'teams': teams}
+    print(teams)
+    return render(request, 'internal/events.html', context)
+
 def edit(request):
     return HttpResponse("Hello, world.")
