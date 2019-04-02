@@ -78,15 +78,16 @@ class Team(models.Model):
         return Profile.objects.filter(team=self)
 
     def points(self):
-        members = Profile.objects.filter(team=self)
+        members = self.members()
+        if members.count() == 0: return 0
         checkoffs = EventCheckoff.objects.filter(person__in=members)
         points = 0.0
         for event in Event.objects.all():
             team_event = checkoffs.filter(event=event)
-            frac = len(team_event) / len(self.members())
+            frac = team_event.count() / members.count()
             points += frac * event.points
         return points
 
     def __str__(self):
-        return '%s' % (self.name)
+        return '%s (%s points)' % (self.name, self.points())
 

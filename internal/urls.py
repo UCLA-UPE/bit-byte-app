@@ -12,5 +12,6 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     path('teams/', views.teams_view, name='teams'),
     path('events/', views.events_view, name='events'),
+    # path('events/submit/', views.events_submit_view, name='events_submit'),
     # path('edit/', views.edit, name='edit'),
 ]
