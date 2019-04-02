@@ -18,9 +18,11 @@
       <td>{{ t.name }}</td>
       <td>{{ t.points }}</td>
       <td><b>{{ t.byte.user.first_name }} {{ t.byte.user.last_name }}</b></td>
-      {% for b in t.bits %}
-        <td>{{ b.user.first_name }} {{ b.user.last_name }}</td>
-      {% endfor %}
+      <td>
+        {% for b in t.bits %}
+          {{ b.user.first_name }} {{ b.user.last_name }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </td>
     </tr>
     {% endfor %}
   </table>
