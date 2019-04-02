@@ -73,8 +73,20 @@ class EventCheckoff(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=200)
-    points = models.DecimalField(max_digits=10, decimal_places=4, default=0)
+
+    def members(self):
+        return Profile.objects.filter(team=self)
+
+    def points(self):
+        members = Profile.objects.filter(team=self)
+        checkoffs = EventCheckoff.objects.filter(person__in=members)
+        points = 0.0
+        for event in Event.objects.all():
+            team_event = checkoffs.filter(event=event)
+            frac = len(team_event) / len(self.members())
+            points += frac * event.points
+        return points
 
     def __str__(self):
-        return '%s (%s)' % (self.name, str(self.points))
+        return '%s' % (self.name)
 
