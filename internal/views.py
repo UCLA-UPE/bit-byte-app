@@ -85,12 +85,16 @@ def profile_view(request):
     return render(request, 'internal/profile.html', context)
 
 def teams_view(request):
-    teams = Team.objects.all()
-    choices = Choice.objects.filter(final=True)
-
-    context = {'teams': teams,
-               'choices': choices}
-
+    teams_raw = Team.objects.all()
+    teams = []
+    for team_raw in teams_raw:
+        team = {'name': team_raw.name, 'points': team_raw.points}
+        members = Profile.objects.filter(team=team_raw)
+        team['byte'] = members.get(role='B')
+        team['bits'] = members.filter(role='b')
+        teams.append(team)
+    context = {'teams': teams}
+    print(teams)
     return render(request, 'internal/teams.html', context)
 
 def edit(request):

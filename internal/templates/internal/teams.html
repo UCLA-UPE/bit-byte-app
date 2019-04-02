@@ -4,27 +4,25 @@
 
 {% block content %}
 <div class="uk-container uk-container-medium">
-	<h1>Teams</h1>
-	<table class="uk-table">
-		<tr>
-			<th class="uk-table-shrink uk-text-nowrap">Team Name</th>
-			<th class="uk-table-shrink uk-text-nowrap">Points</th>
-			<th class="uk-table-shrink uk-text-nowrap">Byte</th>
-			<th>Bits</th>
-		</tr>
+  <h1>Teams</h1>
+  <table class="uk-table">
+    <tr>
+      <th class="uk-table-shrink uk-text-nowrap">Team Name</th>
+      <th class="uk-table-shrink uk-text-nowrap">Points</th>
+      <th class="uk-table-shrink uk-text-nowrap">Byte</th>
+      <th>Bits</th>
+    </tr>
 
-		{% for t in teams %}
-		<tr>
-			<td>{{ t.name }}</td>
-			<td>{{ t.points }}</td>
-			<td><b>{{ t.byte.user.first_name }} {{ t.byte.user.last_name }}</b></td>
-			{% for c in choices %}
-				{% if c.chooser == t.byte %}
-					<td>{{ c.choosee.user.first_name }} {{ c.choosee.user.last_name }}</td>
-				{% endif %}
-			{% endfor %}
-		</tr>
-		{% endfor %}
-	</table>
+    {% for t in teams %}
+    <tr>
+      <td>{{ t.name }}</td>
+      <td>{{ t.points }}</td>
+      <td><b>{{ t.byte.user.first_name }} {{ t.byte.user.last_name }}</b></td>
+      {% for b in t.bits %}
+        <td>{{ b.user.first_name }} {{ b.user.last_name }}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
 </div>
 {% endblock %}
