@@ -18,6 +18,7 @@
       <div class="uk-navbar-right">
         <ul class="uk-navbar-nav">
           {% block nav-home %}<li><a href="{% url 'index' %}">Home</a></li>{% endblock %}
+          {% block nav-teams %}<li><a href="{% url 'teams' %}">Teams</a></li>{% endblock %}
           {% block nav-profile %}<li><a href="{% url 'profile' %}">Profile</a></li>{% endblock %}
           {% if user.is_authenticated == False %}
             {% block nav-register %}<li><a href="{% url 'register' %}">Register</a></li>{% endblock %}

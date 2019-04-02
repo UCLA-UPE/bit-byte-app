@@ -10,5 +10,6 @@ urlpatterns = [
     path('login/submit/', views.login_submit_view, name='login_submit'),
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile_view, name='profile'),
+    path('teams/', views.teams_view, name='teams'),
     # path('edit/', views.edit, name='edit'),
 ]

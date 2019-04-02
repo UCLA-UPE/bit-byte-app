@@ -84,5 +84,14 @@ def profile_view(request):
                'user': request.user}
     return render(request, 'internal/profile.html', context)
 
+def teams_view(request):
+    teams = Team.objects.all()
+    choices = Choice.objects.filter(final=True)
+
+    context = {'teams': teams,
+               'choices': choices}
+
+    return render(request, 'internal/teams.html', context)
+
 def edit(request):
     return HttpResponse("Hello, world.")
