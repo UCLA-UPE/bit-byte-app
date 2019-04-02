@@ -43,6 +43,7 @@ class Profile(models.Model):
     )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    team = models.ForeignKey('Team', null=True, on_delete=models.SET_NULL)
     role = models.CharField(max_length=1, choices=ROLE)
     answers = JSONField(blank=True, default=list)
 
@@ -52,10 +53,9 @@ class Profile(models.Model):
 class Choice(models.Model):
     chooser = models.ForeignKey(Profile, related_name="chooser", on_delete=models.CASCADE)
     choosee = models.ForeignKey(Profile, related_name="choosee", on_delete=models.CASCADE)
-    final = models.BooleanField("Choice Finalized", default=False)
 
     def __str__(self):
-        return '%s chose %s (is final: %s)' % (self.chooser, self.choosee, self.final)
+        return '%s chose %s' % (self.chooser, self.choosee)
 
 class Event(models.Model):
     name = models.CharField(max_length=200)
@@ -73,9 +73,8 @@ class EventCheckoff(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=200)
-    byte = models.ForeignKey(Profile, on_delete=models.CASCADE)
     points = models.DecimalField(max_digits=10, decimal_places=4, default=0)
 
     def __str__(self):
-        return '%s (%s)' % (self.name, self.byte)
+        return '%s (%s)' % (self.name, str(self.points))
 
