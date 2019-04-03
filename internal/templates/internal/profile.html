@@ -8,13 +8,13 @@
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
     <div class="uk-child-width-1-1@m uk-grid-medium uk-grid-match uk-flex uk-flex-column uk-flex-center uk-margin-top" uk-grid>
-        <div><a href="/logout/">&larrb; Get me out</a></div>
         <div><div class="uk-card uk-card-default uk-card-body">
             <h1>Profile</h1>
             <p>Username: {{ user.username }}</p>
             <p>Password: <a href="{% url 'password_change' %}">[ change ]</a></p>
             <p>Email: {{ user.email }}</p>
             <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+            <p>Team: {{ profile.team.name }} ({{ profile.team.points }} points)</p>
             <p>Role: {% if profile.role == 'bit' %}Bit{% else %}Byte{% endif %}</p>
             <p>Answers: {{ profile.answers }}</p>
         </div></div>

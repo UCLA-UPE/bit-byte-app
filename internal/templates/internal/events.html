@@ -1,0 +1,25 @@
+{% extends "internal/base.html" %}
+
+{% block nav-events %}<li class="uk-active"><a href="{% url 'events' %}">Events</a></li>{% endblock %}
+
+{% block content %}
+<div class="uk-container uk-container-small uk-margin-top">
+  <h1>Events</h1>
+  <table class="uk-table">
+    <tr>
+      <td></td>
+      {% for e in events %}
+      <th scope="col">{{ e.name }}</th>
+      {% endfor %}
+    </tr>
+    {% for r in array %}
+    <tr>
+      <th scope="row">{{ r.profile.user.first_name }} {{ r.profile.user.last_name }}</th>
+      {% for c in r.checks %}
+      <td>{{ c }}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

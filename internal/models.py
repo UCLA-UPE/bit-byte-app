@@ -43,6 +43,7 @@ class Profile(models.Model):
     )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    team = models.ForeignKey('Team', null=True, on_delete=models.SET_NULL)
     role = models.CharField(max_length=1, choices=ROLE)
     answers = JSONField(blank=True, default=list)
 
@@ -52,10 +53,9 @@ class Profile(models.Model):
 class Choice(models.Model):
     chooser = models.ForeignKey(Profile, related_name="chooser", on_delete=models.CASCADE)
     choosee = models.ForeignKey(Profile, related_name="choosee", on_delete=models.CASCADE)
-    final = models.BooleanField("Choice Finalized", default=False)
 
     def __str__(self):
-        return '%s chose %s (is final: %s)' % (self.chooser, self.choosee, self.final)
+        return '%s chose %s' % (self.chooser, self.choosee)
 
 class Event(models.Model):
     name = models.CharField(max_length=200)
@@ -73,9 +73,21 @@ class EventCheckoff(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=200)
-    byte = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    points = models.DecimalField(max_digits=10, decimal_places=4, default=0)
+
+    def members(self):
+        return Profile.objects.filter(team=self)
+
+    def points(self):
+        members = self.members()
+        if members.count() == 0: return 0
+        checkoffs = EventCheckoff.objects.filter(person__in=members)
+        points = 0.0
+        for event in Event.objects.all():
+            team_event = checkoffs.filter(event=event)
+            frac = team_event.count() / members.count()
+            points += frac * event.points
+        return points
 
     def __str__(self):
-        return '%s (%s)' % (self.name, self.byte)
+        return '%s (%s points)' % (self.name, self.points())
 
