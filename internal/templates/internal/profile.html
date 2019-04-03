@@ -12,7 +12,7 @@
         <div><div class="uk-card uk-card-default uk-card-body">
             <h1>Profile</h1>
             <p>Username: {{ user.username }}</p>
-            <p>Password: <a href="#">[ change ]</a></p>
+            <p>Password: <a href="{% url 'password_change' %}">[ change ]</a></p>
             <p>Email: {{ user.email }}</p>
             <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
             <p>Role: {% if profile.role == 'bit' %}Bit{% else %}Byte{% endif %}</p>
