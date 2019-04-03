@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from internal.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from internal.models import *
 
 # Create your views here.
 def index_view(request):
@@ -85,13 +85,35 @@ def profile_view(request):
     return render(request, 'internal/profile.html', context)
 
 def teams_view(request):
-    teams = Team.objects.all()
-    choices = Choice.objects.filter(final=True)
-
-    context = {'teams': teams,
-               'choices': choices}
-
+    teams_raw = Team.objects.all()
+    teams = []
+    for team_raw in teams_raw:
+        team = {'name': team_raw.name, 'points': team_raw.points}
+        members = Profile.objects.filter(team=team_raw)
+        try:
+            team['byte'] = members.get(role='B')
+        except Profile.DoesNotExist:
+            team['byte'] = None
+        team['bits'] = members.filter(role='b')
+        teams.append(team)
+    context = {'teams': teams}
+    print(teams)
     return render(request, 'internal/teams.html', context)
+
+def events_view(request):
+    events = Event.objects.all()
+    profiles = Profile.objects.all()
+    checkoffs = EventCheckoff.objects.all()
+    checkoff_array = []
+    for p in profiles:
+        checks = []
+        for e in events:
+            check = checkoffs.filter(person=p, event=e).exists()
+            checks.append(check)
+        checkoff_array.append({'profile': p, 'checks': checks})
+        print(checkoff_array)
+    context = {'events': events, 'array': checkoff_array}
+    return render(request, 'internal/events.html', context)
 
 def edit(request):
     return HttpResponse("Hello, world.")
