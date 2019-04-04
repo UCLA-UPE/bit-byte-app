@@ -15,7 +15,7 @@
             <p>Email: {{ user.email }}</p>
             <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
             <p>Team: {{ profile.team.name }} ({{ profile.team.points }} points)</p>
-            <p>Role: {% if profile.role == 'bit' %}Bit{% else %}Byte{% endif %}</p>
+            <p>Role: {% if profile.role == 'b' %}Bit{% elif profile.role == 'B' %}Byte{% endif %}</p>
             <p>Answers: {{ profile.answers }}</p>
         </div></div>
     </div>
