@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from internal.models import *
@@ -135,8 +135,12 @@ def events_view(request):
     return render(request, 'internal/events.html', context)
 
 def events_submit_view(request, prof_pk, event_pk):
-    # print(request.POST)
-    # print(request.POST.get('did_event', "False"))
+    if not request.user.is_authenticated:
+        return redirect('%s?next=%s' % ('/login/', request.path))    # print(request.POST)
+
+    if not request.user.groups.filter(name="admin").exists():
+        return HttpResponseForbidden('<h1>Forbidden: I can\'t let you do that, Dave.</h1>')
+
     did_event = request.POST.get('did_event', "False") == "True"
     checkoff = EventCheckoff.objects.filter(person=prof_pk, event=event_pk)
     if did_event and not checkoff.exists():
