@@ -47,7 +47,9 @@ class Profile(models.Model):
     answers = JSONField(blank=True, default=list)
 
     def __str__(self):
-        return '%s %s (user: %s, role=%s, team=%s)' % (self.user.first_name, self.user.last_name, self.user.username, self.role, self.team)
+        team_name = "(none)" if self.team == None else self.team.name
+        return '%s %s (user: %s, role=%s, team=%s)' % \
+            (self.user.first_name, self.user.last_name, self.user.username, self.role, team_name)
 
 class Choice(models.Model):
     chooser = models.ForeignKey(Profile, related_name="chooser", on_delete=models.CASCADE)

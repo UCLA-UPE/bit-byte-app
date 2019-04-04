@@ -85,6 +85,9 @@ def profile_view(request):
     return render(request, 'internal/profile.html', context)
 
 def teams_view(request):
+    if not request.user.is_authenticated:
+        return redirect('%s?next=%s' % ('/login/', request.path))
+
     teams_raw = Team.objects.all()
     teams = []
     for team_raw in teams_raw:
@@ -101,8 +104,24 @@ def teams_view(request):
     return render(request, 'internal/teams.html', context)
 
 def events_view(request):
+    if not request.user.is_authenticated:
+        return redirect('%s?next=%s' % ('/login/', request.path))
+
+    # either admin, byte, or bit
+    p = Profile.objects.get(user=request.user)
+    if request.user.groups.filter(name="admin").exists(): # Admin can edit all
+        profiles = Profile.objects.all()
+        editable = True
+
+    elif p.role == "B": # Byte can view team
+        profiles = Profile.objects.filter(team=p.team)
+        editable = False
+
+    elif p.role == "b": # Bit can view self
+        profiles = [p]
+        editable = False
+
     events = Event.objects.all()
-    profiles = Profile.objects.all()
     checkoffs = EventCheckoff.objects.all()
     checkoff_array = []
     for p in profiles:
@@ -111,7 +130,8 @@ def events_view(request):
             check = checkoffs.filter(person=p, event=e).exists()
             checks.append({'check': check, 'event': e.id})
         checkoff_array.append({'profile': p, 'checks': checks})
-    context = {'events': events, 'array': checkoff_array}
+    context = {'events': events, 'array': checkoff_array, 'editable': editable}
+
     return render(request, 'internal/events.html', context)
 
 def events_submit_view(request, prof_pk, event_pk):

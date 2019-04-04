@@ -19,7 +19,7 @@
       <td>
         <form action="{% url 'events_submit' prof_pk=r.profile.id event_pk=c.event %}" method="post">
           {% csrf_token %}
-          <input type="checkbox" name="did_event" value="True" onchange="this.form.submit()" {% if c.check %} checked {% endif %}>
+          <input type="checkbox" name="did_event" value="True" onchange="this.form.submit()" {% if c.check %} checked {% endif %} {% if not editable %} disabled {% endif %} >
         </form>
       </td>
       {% endfor %}
