@@ -16,7 +16,12 @@
     <tr>
       <th scope="row">{{ r.profile.user.first_name }} {{ r.profile.user.last_name }}</th>
       {% for c in r.checks %}
-      <td>{{ c }}</td>
+      <td>
+        <form action="{% url 'events_submit' prof_pk=r.profile.id event_pk=c.event %}" method="post">
+          {% csrf_token %}
+          <input type="checkbox" name="did_event" value="True" onchange="this.form.submit()" {% if c.check %} checked {% endif %}>
+        </form>
+      </td>
       {% endfor %}
     </tr>
     {% endfor %}

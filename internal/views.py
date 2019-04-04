@@ -109,11 +109,24 @@ def events_view(request):
         checks = []
         for e in events:
             check = checkoffs.filter(person=p, event=e).exists()
-            checks.append(check)
+            checks.append({'check': check, 'event': e.id})
         checkoff_array.append({'profile': p, 'checks': checks})
-        print(checkoff_array)
     context = {'events': events, 'array': checkoff_array}
     return render(request, 'internal/events.html', context)
+
+def events_submit_view(request, prof_pk, event_pk):
+    # print(request.POST)
+    # print(request.POST.get('did_event', "False"))
+    did_event = request.POST.get('did_event', "False") == "True"
+    checkoff = EventCheckoff.objects.filter(person=prof_pk, event=event_pk)
+    if did_event and not checkoff.exists():
+        person = Profile.objects.get(id=prof_pk)
+        event = Event.objects.get(id=event_pk)
+        checkoff = EventCheckoff(person=person, event=event)
+        checkoff.save()
+    elif not did_event and checkoff.exists():
+        checkoff.get().delete()
+    return redirect('/events/')
 
 def edit(request):
     return HttpResponse("Hello, world.")

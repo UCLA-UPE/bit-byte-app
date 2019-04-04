@@ -65,6 +65,13 @@ class Event(models.Model):
         return '%s (worth %s points)' % (self.name, self.points)
 
 class EventCheckoff(models.Model):
+
+    # class Meta:
+    #     permissions = (
+    #         ("view_team_checkoff", "Can view their team's event checkoffs"),
+    #         ("edit_all_checkoffs", "Can edit everyone's event checkoffs"),
+    #     )
+
     person = models.ForeignKey(Profile, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
 

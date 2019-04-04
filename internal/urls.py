@@ -19,6 +19,6 @@ urlpatterns = [
     path('password_change/', auth_views.PasswordChangeView.as_view(template_name="internal/password_change.html"), name="password_change"),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name="internal/password_change_done.html"), name="password_change_done"),
     path('events/', views.events_view, name='events'),
-    # path('events/submit/', views.events_submit_view, name='events_submit'),
+    path('events/submit/<int:prof_pk>/<int:event_pk>/', views.events_submit_view, name='events_submit'),
     # path('edit/', views.edit, name='edit'),
 ]
