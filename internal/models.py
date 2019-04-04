@@ -34,7 +34,6 @@ class SiteSettings(SingletonModel):
         verbose_name_plural = "Site Settings"
     byte_signup_pass = models.CharField(max_length=255, default="upe_byte")
     bit_signup_pass = models.CharField(max_length=255, default="bits_2019")
-    questions = JSONField(default=questions)
 
 class Profile(models.Model):
     ROLE = (
@@ -48,7 +47,7 @@ class Profile(models.Model):
     answers = JSONField(blank=True, default=list)
 
     def __str__(self):
-        return '%s %s (%s)' % (self.user.first_name, self.user.last_name, self.user.username)
+        return '%s %s (user: %s, role=%s, team=%s)' % (self.user.first_name, self.user.last_name, self.user.username, self.role, self.team)
 
 class Choice(models.Model):
     chooser = models.ForeignKey(Profile, related_name="chooser", on_delete=models.CASCADE)
