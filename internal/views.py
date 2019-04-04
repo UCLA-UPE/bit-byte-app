@@ -109,7 +109,7 @@ def events_view(request):
 
     # either admin, byte, or bit
     p = Profile.objects.get(user=request.user)
-    if request.user.groups.filter(name="admin").exists(): # Admin can edit all
+    if request.user.is_staff: # Admin can edit all
         profiles = Profile.objects.all()
         editable = True
 
@@ -138,7 +138,7 @@ def events_submit_view(request, prof_pk, event_pk):
     if not request.user.is_authenticated:
         return redirect('%s?next=%s' % ('/login/', request.path))    # print(request.POST)
 
-    if not request.user.groups.filter(name="admin").exists():
+    if not request.user.is_staff:
         return HttpResponseForbidden('<h1>Forbidden: I can\'t let you do that, Dave.</h1>')
 
     did_event = request.POST.get('did_event', "False") == "True"
