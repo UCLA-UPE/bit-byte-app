@@ -42,7 +42,7 @@ class Profile(models.Model):
     )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    team = models.ForeignKey('Team', null=True, on_delete=models.SET_NULL)
+    team = models.ForeignKey('Team', blank=True, null=True, on_delete=models.SET_NULL)
     role = models.CharField(max_length=1, choices=ROLE)
     answers = JSONField(blank=True, default=list)
 
@@ -58,12 +58,23 @@ class Choice(models.Model):
     def __str__(self):
         return '%s chose %s' % (self.chooser, self.choosee)
 
+class EventCategory(models.Model):
+
+    category = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.category
+
 class Event(models.Model):
     name = models.CharField(max_length=200)
+    category = models.ForeignKey(EventCategory, blank=True, null=True, on_delete=models.SET_NULL)
     points = models.IntegerField()
 
     def __str__(self):
-        return '%s (worth %s points)' % (self.name, self.points)
+        if self.category is not None:
+            return '%s (%s, worth %s points)' % (self.name, self.category, self.points)
+        else:
+            return '%s (worth %s points)' % (self.name, self.points)
 
 class EventCheckoff(models.Model):
 
