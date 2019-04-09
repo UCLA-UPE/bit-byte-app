@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseForbidden
-from django.contrib.auth.models import User
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from internal.models import *
 
 # Create your views here.
@@ -134,22 +135,28 @@ def events_view(request):
 
     return render(request, 'internal/events.html', context)
 
-def events_submit_view(request, prof_pk, event_pk):
+def events_submit_view(request):
     if not request.user.is_authenticated:
         return redirect('%s?next=%s' % ('/login/', request.path))    # print(request.POST)
 
     if not request.user.is_staff:
-        return HttpResponseForbidden('<h1>Forbidden: I can\'t let you do that, Dave.</h1>')
+        return HttpResponseForbidden('<h1>Forbidden: User is not allowed to edit event checkoffs.</h1>')
 
-    did_event = request.POST.get('did_event', "False") == "True"
-    checkoff = EventCheckoff.objects.filter(person=prof_pk, event=event_pk)
-    if did_event and not checkoff.exists():
-        person = Profile.objects.get(id=prof_pk)
-        event = Event.objects.get(id=event_pk)
-        checkoff = EventCheckoff(person=person, event=event)
-        checkoff.save()
-    elif not did_event and checkoff.exists():
-        checkoff.get().delete()
+    for profile in Profile.objects.all():
+        for event in Event.objects.all():
+            # did_event = request.POST.get('did_event_%s_%s' % (str(profile.id), str(event.id)), "False") == "True"
+            did_event = request.POST.get('cb_%s_%s' % (str(profile.id), str(event.id)))
+            checkoff = EventCheckoff.objects.filter(person=profile.id, event=event.id)
+            # print('cb_%s_%s %s' % (str(profile.id), str(event.id), str(did_event)))
+            if did_event == "True" and not checkoff.exists():
+                print("person %s event %s IS now checked, creating..." % (profile.user.first_name, event.name))
+                checkoff = EventCheckoff(person=profile, event=event)
+                checkoff.save()
+            elif did_event == "False" and checkoff.exists():
+                print("person %s event %s is now NOT checked, deleting..." % (profile.user.first_name, event.name))
+                checkoff.get().delete()
+                
+    messages.add_message(request, messages.SUCCESS, "Event checkoffs successfully updated.")
     return redirect('/events/')
 
 def edit(request):

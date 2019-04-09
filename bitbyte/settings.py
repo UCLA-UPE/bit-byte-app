@@ -125,3 +125,12 @@ STATIC_URL = '/static/'
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'tmp/email')
 
+
+# custom
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.INFO: 'uk-text-primary',
+    messages.SUCCESS: 'uk-text-success',
+    messages.WARNING: 'uk-text-warning',
+    messages.ERROR: 'uk-text-danger',
+}
