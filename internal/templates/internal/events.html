@@ -5,43 +5,43 @@
 {% block content %}
 <div class="uk-container uk-container-large">
 
-  {% if messages %}
-  {% for message in messages %}
-  <p{% if message.tags %} class="{{ message.tags }}"{% endif %}><strong>{{ message }}</strong></p>
-  {% endfor %}
-  {% endif %}
+    {% if messages %}
+    {% for message in messages %}
+    <p{% if message.tags %} class="{{ message.tags }}"{% endif %}><strong>{{ message }}</strong></p>
+    {% endfor %}
+    {% endif %}
 
-  <div class="uk-child-width-1-1@m uk-grid-medium uk-grid-match uk-flex uk-flex-column uk-flex-center uk-margin-top" uk-grid>
-    <div><div class="uk-card uk-card-default uk-card-body">
-      <h1>Events</h1>
-      <form action="{% url 'events_submit' %}" method="post">
-        {% csrf_token %}
-        <div class="uk-overflow-auto">
-          <table class="uk-table">
-            <tr>
-              <td></td>
-              {% for e in events %}
-              <th scope="col">{{ e.name }}</th>
-              {% endfor %}
-            </tr>
-            {% for r in array %}
-            <tr>
-              <th scope="row">{{ r.profile.user.first_name }} {{ r.profile.user.last_name }}</th>
-              {% for c in r.checks %}
-              <td>
-                <input type="hidden" name="cb_{{ r.profile.id }}_{{ c.event }}" value="False">
-                <input type="checkbox" name="cb_{{ r.profile.id }}_{{ c.event }}" value="True" {% if c.check %} checked {% endif %} {% if not editable %} disabled {% endif %} >
-              </td>
-              {% endfor %}
-            </tr>
-            {% endfor %}
-          </table>
-        </div>
-        {% if editable %}
-        <button type="submit" class="uk-button uk-button-primary">Save</button>
-        {% endif %}
-      </form>
-    </div></div>
-  </div>
+    <div class="uk-child-width-1-1@m uk-grid-medium uk-grid-match uk-flex uk-flex-column uk-flex-center uk-margin-top" uk-grid>
+        <div><div class="uk-card uk-card-default uk-card-body">
+            <h1>Events</h1>
+            <form action="{% url 'events_submit' %}" method="post">
+                {% csrf_token %}
+                <div class="uk-overflow-auto">
+                    <table class="uk-table">
+                        <tr>
+                            <td></td>
+                            {% for e in events %}
+                            <th scope="col">{{ e.name }}</th>
+                            {% endfor %}
+                        </tr>
+                        {% for r in array %}
+                        <tr>
+                            <th scope="row">{{ r.profile.user.first_name }} {{ r.profile.user.last_name }}</th>
+                            {% for c in r.checks %}
+                            <td>
+                                <input type="hidden" name="cb_{{ r.profile.id }}_{{ c.event }}" value="False">
+                                <input type="checkbox" name="cb_{{ r.profile.id }}_{{ c.event }}" value="True" {% if c.check %} checked {% endif %} {% if not editable %} disabled {% endif %} >
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                {% if editable %}
+                <button type="submit" class="uk-button uk-button-primary">Save</button>
+                {% endif %}
+            </form>
+        </div></div>
+    </div>
 </div>
 {% endblock %}

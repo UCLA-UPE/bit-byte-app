@@ -10,13 +10,13 @@
     <div class="uk-child-width-1-2@m uk-grid-medium uk-grid-match uk-flex-center" uk-grid>
         <div><div class="uk-card uk-card-default uk-card-body uk-margin-top">
             <form action="{% url 'login_submit' %}" method="post">
-            {% csrf_token %}
-            <fieldset class="uk-fieldset">
-            <legend class="uk-legend">Login</legend>
-            <div class="uk-margin"><input class="uk-input" type="text" placeholder="username" name="username"></div>
-            <div class="uk-margin"><input class="uk-input" type="password" placeholder="password" name="password"></div>
-            </fieldset>
-            <input type="submit" value="Get me in &rarrb;">
+                {% csrf_token %}
+                <fieldset class="uk-fieldset">
+                <legend class="uk-legend">Login</legend>
+                <div class="uk-margin"><input class="uk-input" type="text" placeholder="username" name="username"></div>
+                <div class="uk-margin"><input class="uk-input" type="password" placeholder="password" name="password"></div>
+                </fieldset>
+                <input type="submit" value="Get me in &rarrb;">
             </form>
             <div class="uk-margin"><a class="uk-text-small" href="{% url 'password_reset' %}">Forgot your password?</a></div>
         </div></div>
