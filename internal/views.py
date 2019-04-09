@@ -7,14 +7,7 @@ from internal.models import *
 
 # Create your views here.
 def index_view(request):
-    user = None
-
-    if request.user.is_authenticated and not request.user.is_superuser and not request.user.is_staff:
-        user = request.user
-
-    profiles = Profile.objects.all()
-    context = {'profiles': profiles}
-    return render(request, 'internal/index.html', context)
+    return redirect('/profile/')
 
 def register_view(request):
     return render(request, 'internal/register.html')
@@ -92,15 +85,21 @@ def teams_view(request):
     teams_raw = Team.objects.all()
     teams = []
     for team_raw in teams_raw:
-        team = {'name': team_raw.name, 'points': team_raw.points}
+        team = {'name': team_raw.name, 'points': team_raw.points()}
         members = Profile.objects.filter(team=team_raw)
-        try:
-            team['byte'] = members.get(role='B')
-        except Profile.DoesNotExist:
+        byte = members.filter(role='B')
+        if byte.exists():
+            team['byte'] = byte.get()
+        else:
             team['byte'] = None
         team['bits'] = members.filter(role='b')
+        team['cur_user'] = members.filter(user=request.user).exists()
         teams.append(team)
-    context = {'teams': teams}
+
+    # sort in descending score
+    teams_sorted = sorted(teams, key=lambda team: float(team['points']), reverse=True)
+
+    context = {'teams': teams_sorted}
     print(teams)
     return render(request, 'internal/teams.html', context)
 
@@ -155,7 +154,7 @@ def events_submit_view(request):
             elif did_event == "False" and checkoff.exists():
                 print("person %s event %s is now NOT checked, deleting..." % (profile.user.first_name, event.name))
                 checkoff.get().delete()
-                
+
     messages.add_message(request, messages.SUCCESS, "Event checkoffs successfully updated.")
     return redirect('/events/')
 
