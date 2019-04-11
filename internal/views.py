@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from internal.models import *
+from internal.forms import ProfileForm
 
 # Create your views here.
 def index_view(request):
@@ -77,6 +78,20 @@ def profile_view(request):
     context = {'profile': Profile.objects.get(user=request.user),
                'user': request.user}
     return render(request, 'internal/profile.html', context)
+
+def edit_profile_view(request):
+	if not request.user.is_authenticated:
+		return redirect('%s?next=%s' % ('/login/', request.path))
+
+	if request.method == "POST":
+		form = ProfileForm(request.POST, instance=request.user)
+		if form.is_valid():
+			form.save()
+			return redirect('/profile/')
+	else:
+		form = ProfileForm(instance=request.user)
+
+	return render(request, 'internal/editprofile.html', {'form': form})
 
 def teams_view(request):
     if not request.user.is_authenticated:

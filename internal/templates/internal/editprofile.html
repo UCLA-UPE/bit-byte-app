@@ -1,0 +1,21 @@
+{% extends "internal/base.html" %}
+
+{% block nav-profile %}<li class="uk-active"><a href="{% url 'profile' %}">Profile</a></li>{% endblock %}
+
+{% block content %}
+<div class="uk-container uk-container-small">
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+    <div class="uk-child-width-1-1@m uk-grid-medium uk-grid-match uk-flex uk-flex-column uk-flex-center uk-margin-top" uk-grid>
+        <div><div class="uk-card uk-card-default uk-card-body">
+            <h1>Edit Profile</h1>
+            <form method="post">
+		      {% csrf_token %}
+		      {{ form.as_p }}
+		      <button type="submit">Submit</button>
+		    </form>
+        </div></div>
+    </div>
+</div>
+{% endblock %}

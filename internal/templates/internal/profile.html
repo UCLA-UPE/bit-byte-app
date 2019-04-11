@@ -17,6 +17,7 @@
             <p>Team: {% if profile.team == None %}(None){% else %}{{ profile.team.name }} ({{ profile.team.points }} points){% endif %}</p>
             <p>Role: {% if profile.role == 'b' %}Bit{% elif profile.role == 'B' %}Byte{% endif %}</p>
             <p>Answers: {{ profile.answers }}</p>
+            <p><a href="{% url 'edit_profile' %}">Update profile</a></p>
         </div></div>
     </div>
 </div>
