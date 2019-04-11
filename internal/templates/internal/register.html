@@ -5,14 +5,18 @@
 {% block content %}
 <div class="uk-container uk-container-small">
 
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
     <div class="uk-child-width-1-2@m uk-grid-medium uk-grid-match uk-flex-center" uk-grid>
         <div><div class="uk-card uk-card-default uk-card-body uk-margin-top">
             <form action="{% url 'register_submit' %}" method="post">
             {% csrf_token %}
             <fieldset class="uk-fieldset">
             <legend class="uk-legend">Register</legend>
+            {% if error_message %}
+            <div class="uk-alert-danger" uk-alert>
+                    <a class="uk-alert-close" uk-close></a>
+                    <p class="">{{ error_message }}</p>
+            </div>
+            {% endif %}
             <div class="uk-margin"><input class="uk-input" type="text" placeholder="username" name="username"></div>
             <div class="uk-margin"><input class="uk-input" type="password" placeholder="password" name="password"></div>
             <div class="uk-margin"><input class="uk-input" type="email" placeholder="email" name="email"></div>
@@ -24,7 +28,7 @@
             </select></div>
             <div class="uk-margin"><input class="uk-input" type="text" placeholder="invite code" name="invite"></div>
             </fieldset>
-            <input type="submit" value="Sign me up fam">
+            <input type="submit" class="uk-button uk-button-default" value="Sign me up fam">
             </form>
         </div></div>
     </div>

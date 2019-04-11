@@ -26,7 +26,7 @@
                         </tr>
                         {% for r in array %}
                         <tr>
-                            <th scope="row">{{ r.profile.user.first_name }} {{ r.profile.user.last_name }}</th>
+                            <th scope="row">{{ r.profile.user.first_name }} {{ r.profile.user.last_name }} ({{r.profile.user.email}})</th>
                             {% for c in r.checks %}
                             <td>
                                 <input type="hidden" name="cb_{{ r.profile.id }}_{{ c.event }}" value="False">
