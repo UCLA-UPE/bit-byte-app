@@ -15,7 +15,7 @@ class ProfileForm(forms.ModelForm):
 	def clean_email(self):
 		username = self.cleaned_data.get('username')
 		email = self.cleaned_data.get('email')
-		if email and User.objects.filter(email=email).exclude(username=username).count():
+		if email and User.objects.filter(email=email).exclude(id=self.instance.id).count():
 			raise forms.ValidationError('This email is already in use! Please use a different email.')
 		return email
 
