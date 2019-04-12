@@ -29,8 +29,12 @@
                             <th scope="row">{{ r.profile.user.first_name }} {{ r.profile.user.last_name }} ({{r.profile.user.email}})</th>
                             {% for c in r.checks %}
                             <td>
-                                <input type="hidden" name="cb_{{ r.profile.id }}_{{ c.event }}" value="False">
-                                <input type="checkbox" name="cb_{{ r.profile.id }}_{{ c.event }}" value="True" {% if c.check %} checked {% endif %} {% if not editable %} disabled {% endif %} >
+                                <input type="hidden" name="cb_{{ r.profile.id }}_{{ c.event }}" value="0">
+                                {% if c.repeatable %}
+                                <input class="uk-input uk-form-small uk-form-width-xsmall" type="text" name="cb_{{ r.profile.id }}_{{ c.event }}" value="{{ c.count }}" {% if not editable %} disabled {% endif %} >
+                                {% else %}
+                                <input class="uk-checkbox" type="checkbox" name="cb_{{ r.profile.id }}_{{ c.event }}" value="1" {% if c.count %} checked {% endif %} {% if not editable %} disabled {% endif %} >
+                                {% endif %}
                             </td>
                             {% endfor %}
                         </tr>

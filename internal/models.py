@@ -68,6 +68,7 @@ class EventCategory(models.Model):
 class Event(models.Model):
     name = models.CharField(max_length=200)
     category = models.ForeignKey(EventCategory, blank=True, null=True, on_delete=models.SET_NULL)
+    repeatable = models.BooleanField(default=False)
     points = models.IntegerField()
 
     def __str__(self):
@@ -99,12 +100,28 @@ class Team(models.Model):
     def points(self):
         members = self.members()
         if members.count() == 0: return 0
-        checkoffs = EventCheckoff.objects.filter(person__in=members)
+
         points = 0.0
-        for event in Event.objects.all():
+
+        # one-off events: points = worth * frac
+        oneoffs = Event.objects.filter(repeatable=False)
+        checkoffs = EventCheckoff.objects.filter(person__in=members, event__in=oneoffs)
+        for event in oneoffs:
             team_event = checkoffs.filter(event=event)
+            # one-off: check that there are no duplicates for the same event and person
+            ids = team_event.values_list('person', flat=True)
+            if len(ids) != len(set(ids)):
+                raise ValueError("Detected duplicate checkoffs for team [%s] in non-repeatable event [%s] when attempting to calculate points." % (self.name, event.name))
             frac = team_event.count() / members.count()
             points += frac * event.points
+
+        # repeatable events: points = sum(worth)
+        repeatable = Event.objects.filter(repeatable=True)
+        checkoffs = EventCheckoff.objects.filter(person__in=members, event__in=repeatable)
+        for event in repeatable:
+            team_event = checkoffs.filter(event=event)
+            points += team_event.count() * event.points
+
         return points
 
     def __str__(self):

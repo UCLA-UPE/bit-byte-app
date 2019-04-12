@@ -142,8 +142,8 @@ def events_view(request):
     for p in profiles:
         checks = []
         for e in events:
-            check = checkoffs.filter(person=p, event=e).exists()
-            checks.append({'check': check, 'event': e.id})
+            count = checkoffs.filter(person=p, event=e).count()
+            checks.append({'repeatable': e.repeatable, 'count': count, 'event': e.id})
         checkoff_array.append({'profile': p, 'checks': checks})
     context = {'events': events, 'array': checkoff_array, 'editable': editable}
 
@@ -158,17 +158,14 @@ def events_submit_view(request):
 
     for profile in Profile.objects.all():
         for event in Event.objects.all():
-            # did_event = request.POST.get('did_event_%s_%s' % (str(profile.id), str(event.id)), "False") == "True"
-            did_event = request.POST.get('cb_%s_%s' % (str(profile.id), str(event.id)))
-            checkoff = EventCheckoff.objects.filter(person=profile.id, event=event.id)
-            # print('cb_%s_%s %s' % (str(profile.id), str(event.id), str(did_event)))
-            if did_event == "True" and not checkoff.exists():
-                print("person %s event %s IS now checked, creating..." % (profile.user.first_name, event.name))
-                checkoff = EventCheckoff(person=profile, event=event)
-                checkoff.save()
-            elif did_event == "False" and checkoff.exists():
-                print("person %s event %s is now NOT checked, deleting..." % (profile.user.first_name, event.name))
-                checkoff.get().delete()
+            did_event_count = request.POST.get('cb_%s_%s' % (str(profile.id), str(event.id)))
+            did_event_count = int(did_event_count)
+            checkoffs = EventCheckoff.objects.filter(person=profile.id, event=event.id)
+            while checkoffs.count() < int(did_event_count): # create some checkoffs...
+                co = EventCheckoff(person=profile, event=event)
+                co.save()
+            while checkoffs.count() > int(did_event_count): # delete some checkoffs...
+                checkoffs[0].delete()
 
     messages.add_message(request, messages.SUCCESS, "Event checkoffs successfully updated.")
     return redirect('/events/')
