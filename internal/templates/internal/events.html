@@ -21,7 +21,7 @@
                         <tr>
                             <td></td>
                             {% for e in events %}
-                            <th scope="col">{{ e.name }}</th>
+                            <th scope="col">{{ e.name }}{% if e.category %} <span class="uk-text-primary">({{ e.category }})</span>{% endif %}</th>
                             {% endfor %}
                         </tr>
                         {% for r in array %}

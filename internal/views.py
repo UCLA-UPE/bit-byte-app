@@ -136,7 +136,7 @@ def events_view(request):
         profiles = [p]
         editable = False
 
-    events = Event.objects.all()
+    events = Event.objects.all().order_by('id')
     checkoffs = EventCheckoff.objects.all()
     checkoff_array = []
     for p in profiles:
