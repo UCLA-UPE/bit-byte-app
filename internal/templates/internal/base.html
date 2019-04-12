@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
     <head>
-        <title>UPE Bit-Byte Program 2019</title>
+        <title>UPE Bit-Byte 2019 Dashboard</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta charset="utf-8">
         <!-- UIkit CSS -->
@@ -16,7 +16,7 @@
     <body>
         <nav class="uk-navbar-container" uk-navbar>
             <div class="uk-navbar-left">
-                <a class="uk-navbar-item uk-logo" href="{% url 'profile' %}">Bit-Byte Application</a>
+                <a class="uk-navbar-item uk-logo" href="{% url 'profile' %}">Bit-Byte Dashboard{% if user.is_authenticated %} &middot; {{ user.first_name }} {{ user.last_name }}{% endif %}</a>
             </div>
             <div class="uk-navbar-right">
                 <ul class="uk-navbar-nav">

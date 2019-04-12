@@ -21,13 +21,13 @@
 
                 {% for t in teams %}
                 <tr {% if t.cur_user %}class="uk-background-secondary"{% endif %}>
-                <td class="uk-text-nowrap {% if t.cur_user %}uk-light{% endif %}">{{ forloop.counter }}</td>
+                <td class="uk-text-nowrap {% if t.cur_user %}uk-light{% endif %} {% if forloop.counter == 1 %}uk-text-primary{% endif %}">{% if forloop.counter == 1 %}&starf;{% else %}{{ forloop.counter }}{% endif %}</td>
                 <td class="uk-text-nowrap {% if t.cur_user %}uk-light{% endif %}">{{ t.name }}</td>
-                <td class="uk-text-nowrap {% if t.cur_user %}uk-light{% endif %}">{{ t.points|stringformat:'.2f' }}</td>
-                <td class="uk-text-nowrap {% if t.cur_user %}uk-light{% endif %}"><b>{{ t.byte.user.first_name }} {{ t.byte.user.last_name }}</b></td>
+                <td class="uk-text-nowrap {% if t.cur_user %}uk-light{% endif %}">{{ t.points|stringformat:'.1f' }}</td>
+                <td class="uk-text-nowrap {% if t.cur_user %}uk-light{% endif %}"><b>{% if t.byte %}{{ t.byte.user.first_name }} {{ t.byte.user.last_name }}</b> ({{ t.byte.points|stringformat:'.1f' }}){% endif %}</td>
                 <td class="{% if t.cur_user %}uk-light{% endif %}">
                     {% for b in t.bits %}
-                    {{ b.user.first_name }} {{ b.user.last_name }}{% if not forloop.last %}, {% endif %}
+                    <b>{{ b.user.first_name }} {{ b.user.last_name }}</b> ({{ b.points|stringformat:'.1f' }}){% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </td>
                 </tr>

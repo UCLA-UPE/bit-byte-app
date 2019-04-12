@@ -51,6 +51,22 @@ class Profile(models.Model):
         return '%s %s (user: %s, role=%s, team=%s)' % \
             (self.user.first_name, self.user.last_name, self.user.username, self.role, team_name)
 
+    def points(self):
+        points = 0.0
+        # one-off events: points = worth * frac
+        events = Event.objects.all()
+        checkoffs = EventCheckoff.objects.filter(person=self)
+        for event in events:
+            person_event = checkoffs.filter(event=event)
+            points_add = person_event.count() * event.points
+            if not event.repeatable:
+                points_add /= self.team.members().count()
+                # one-off: check that there are no duplicates for the same event and person
+                if person_event.count() > 1:
+                    raise ValueError("Detected duplicate checkoffs for user [%s] in non-repeatable event [%s] when attempting to calculate points." % (self.user.username, event.name))
+            points += points_add
+        return points
+
 class Choice(models.Model):
     chooser = models.ForeignKey(Profile, related_name="chooser", on_delete=models.CASCADE)
     choosee = models.ForeignKey(Profile, related_name="choosee", on_delete=models.CASCADE)
@@ -98,30 +114,9 @@ class Team(models.Model):
         return Profile.objects.filter(team=self)
 
     def points(self):
-        members = self.members()
-        if members.count() == 0: return 0
-
         points = 0.0
-
-        # one-off events: points = worth * frac
-        oneoffs = Event.objects.filter(repeatable=False)
-        checkoffs = EventCheckoff.objects.filter(person__in=members, event__in=oneoffs)
-        for event in oneoffs:
-            team_event = checkoffs.filter(event=event)
-            # one-off: check that there are no duplicates for the same event and person
-            ids = team_event.values_list('person', flat=True)
-            if len(ids) != len(set(ids)):
-                raise ValueError("Detected duplicate checkoffs for team [%s] in non-repeatable event [%s] when attempting to calculate points." % (self.name, event.name))
-            frac = team_event.count() / members.count()
-            points += frac * event.points
-
-        # repeatable events: points = sum(worth)
-        repeatable = Event.objects.filter(repeatable=True)
-        checkoffs = EventCheckoff.objects.filter(person__in=members, event__in=repeatable)
-        for event in repeatable:
-            team_event = checkoffs.filter(event=event)
-            points += team_event.count() * event.points
-
+        for member in self.members():
+            points += member.points()
         return points
 
     def __str__(self):
