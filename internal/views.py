@@ -125,7 +125,7 @@ def events_view(request):
     # either admin, byte, or bit
     p = Profile.objects.get(user=request.user)
     if request.user.is_staff: # Admin can edit all
-        profiles = Profile.objects.all()
+        profiles = Profile.objects.filter(role__isnull=False)
         editable = True
 
     elif p.role == "B": # Byte can view team
