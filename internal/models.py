@@ -43,7 +43,7 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     team = models.ForeignKey('Team', blank=True, null=True, on_delete=models.SET_NULL)
-    role = models.CharField(max_length=1, choices=ROLE)
+    role = models.CharField(max_length=1, choices=ROLE, blank=True, null=True)
     answers = JSONField(blank=True, default=list)
 
     def __str__(self):
