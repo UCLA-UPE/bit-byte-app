@@ -124,17 +124,17 @@ def events_view(request):
 
     # either admin, byte, or bit
     p = Profile.objects.get(user=request.user)
+    editable = False
     if request.user.is_staff: # Admin can edit all
         profiles = Profile.objects.filter(role__isnull=False)
         editable = True
 
-    elif p.role == "B": # Byte can view team
-        profiles = Profile.objects.filter(team=p.team)
-        editable = False
-
-    elif p.role == "b": # Bit can view self
+    elif p.team == None or p.role == "b": # Teamless and bit can view self
         profiles = [p]
-        editable = False
+
+    elif p.role == "B": # Byte with team can view team
+        profiles = Profile.objects.filter(role__isnull=False, team=p.team)
+
 
     events = Event.objects.all().order_by('id')
     checkoffs = EventCheckoff.objects.all()
