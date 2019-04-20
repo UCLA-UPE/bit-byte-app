@@ -21,28 +21,40 @@
                         <tr>
                             <td></td>
                             {% for e in events %}
-                            <th scope="col">{{ e.name }}{% if e.category %} <span class="uk-text-primary">({{ e.category }})</span>{% endif %}</th>
+                            <th scope="col">{{ e.name }}{% if e.category %} <span class="uk-text-warning">({{ e.category }})</span>{% endif %}</th>
                             {% endfor %}
                         </tr>
-                        {% for r in array %}
+                        {% for team_id, team in teams.items %}
                         <tr>
-                            <th scope="row">{{ r.profile.user.first_name }} {{ r.profile.user.last_name }} ({{r.profile.user.email}})</th>
-                            {% for c in r.checks %}
                             <td>
-                                <input type="hidden" name="cb_{{ r.profile.id }}_{{ c.event }}" value="0">
+                                <p class="{% if team_id == 0 %}uk-text-muted{% else %}uk-text-primary{% endif %}">{{ team.team_name }}</p>
+                            </td>
+                        </tr>
+                        {% for member in team.members %}
+                        <tr>
+                            <th scope="row">{{ member.profile.user.first_name }} {{ member.profile.user.last_name }} ({{member.profile.user.email}})</th>
+                            {% for c in member.checks %}
+                            <td>
+                                <input type="hidden" name="cb_{{ member.profile.id }}_{{ c.event }}" value="0">
                                 {% if c.repeatable %}
-                                <input class="uk-input uk-form-small uk-form-width-xsmall" type="text" name="cb_{{ r.profile.id }}_{{ c.event }}" value="{{ c.count }}" {% if not editable %} disabled {% endif %} >
+                                <input class="uk-input uk-form-small uk-form-width-xsmall" type="text" name="cb_{{ member.profile.id }}_{{ c.event }}" value="{{ c.count }}" {% if not editable %} disabled {% endif %} >
                                 {% else %}
-                                <input class="uk-checkbox" type="checkbox" name="cb_{{ r.profile.id }}_{{ c.event }}" value="1" {% if c.count %} checked {% endif %} {% if not editable %} disabled {% endif %} >
+                                <input class="uk-checkbox" type="checkbox" name="cb_{{ member.profile.id }}_{{ c.event }}" value="1" {% if c.count %} checked {% endif %} {% if not editable %} disabled {% endif %} >
                                 {% endif %}
                             </td>
                             {% endfor %}
                         </tr>
                         {% endfor %}
+                        <tr>
+                            <td>
+                                <hr>
+                            </td>
+                        </tr>
+                        {% endfor %}
                     </table>
                 </div>
                 {% if editable %}
-                <button type="submit" class="uk-button uk-button-primary">Save</button>
+                <button type="submit" class="uk-button uk-button-primary uk-margin-top">Save</button>
                 {% endif %}
             </form>
         </div></div>

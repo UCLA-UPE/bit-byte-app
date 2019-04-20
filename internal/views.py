@@ -135,18 +135,29 @@ def events_view(request):
     elif p.role == "B": # Byte with team can view team
         profiles = Profile.objects.filter(role__isnull=False, team=p.team)
 
-
     events = Event.objects.all().order_by('id')
     checkoffs = EventCheckoff.objects.all()
-    checkoff_array = []
+
+    teams = {}
     for p in profiles:
         checks = []
+        # all events for this person
         for e in events:
             count = checkoffs.filter(person=p, event=e).count()
             checks.append({'repeatable': e.repeatable, 'count': count, 'event': e.id})
-        checkoff_array.append({'profile': p, 'checks': checks})
-    context = {'events': events, 'array': checkoff_array, 'editable': editable}
-
+        # insert this person into a team
+        # assign id=0 for teamless people
+        team_id = 0 if p.team == None else p.team.id
+        # create dict entry if team does not exist
+        if team_id not in teams:
+            teams[team_id] = {'team_name': '(Teamless)' if team_id == 0 else p.team.name, 'members': []}
+        # make sure bytes are first
+        if p.role == 'B':
+            teams[team_id]['members'] = [{'profile': p, 'checks': checks}] + teams[team_id]['members']
+        else:
+            teams[team_id]['members'].append({'profile': p, 'checks': checks})
+    
+    context = {'events': events, 'teams': teams, 'editable': editable}
     return render(request, 'internal/events.html', context)
 
 def events_submit_view(request):
@@ -159,6 +170,8 @@ def events_submit_view(request):
     for profile in Profile.objects.all():
         for event in Event.objects.all():
             did_event_count = request.POST.get('cb_%s_%s' % (str(profile.id), str(event.id)))
+            if did_event_count == None:
+                continue
             did_event_count = int(did_event_count)
             checkoffs = EventCheckoff.objects.filter(person=profile.id, event=event.id)
             while checkoffs.count() < int(did_event_count): # create some checkoffs...
