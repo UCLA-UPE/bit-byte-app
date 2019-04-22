@@ -41,7 +41,7 @@ class Profile(models.Model):
         ('b', 'Bit')
     )
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     team = models.ForeignKey('Team', blank=True, null=True, on_delete=models.SET_NULL)
     role = models.CharField(max_length=1, choices=ROLE, blank=True, null=True)
     answers = JSONField(blank=True, default=list)
@@ -109,6 +109,7 @@ class EventCheckoff(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=200)
+    invite_code = models.CharField(max_length=16)
 
     def members(self):
         return Profile.objects.filter(team=self)

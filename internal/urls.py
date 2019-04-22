@@ -12,6 +12,8 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile_view, name='profile'),
     path('teams/', views.teams_view, name='teams'),
+    path('teams/create/', views.teams_create_view, name='teams_create'),
+    path('teams/join/', views.teams_join_view, name='teams_join'),
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name="internal/password_reset.html"), name="password_reset"),
     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name="internal/password_reset_done.html"), name="password_reset_done"),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="internal/password_reset_confirm.html"), name="password_reset_confirm"),

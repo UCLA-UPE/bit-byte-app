@@ -33,6 +33,28 @@
                 </tr>
                 {% endfor %}
             </table>
+            {% if role == 'B' and team_name == None %}
+            <hr>
+            <form action="{% url 'teams_create' %}" method="post" class="uk-margin-top">
+                {% csrf_token %}
+                <em>You are not in a team. As a byte, you should create a team and share the invite code with your bits.</em>
+                <div uk-grid class="uk-margin-top">
+                    <div class="uk-width-expand"><input class="uk-margin uk-input" name="team_name" placeholder="Team name"></div>
+                    <div class="uk-width-auto"><button type="submit" class="uk-button uk-button-primary">+ Create and join team</button></div>
+            </form>
+            {% elif role == 'B' and team_name != None %}
+            <hr>
+            <em>Your team is <span class="uk-text-primary">{{ team_name }}</span>. The invite code is <span class="uk-text-primary">{{ byte_invite_code }}</span>. Please share this with your bits.</em>
+            {% elif role == 'b' and team_name == None %}
+            <hr>
+            <form action="{% url 'teams_join' %}" method="post" class="uk-margin-top">
+                {% csrf_token %}
+                <em>You are not in a team. As a bit, you should get a team invite code from your byte.</em>
+                <div uk-grid class="uk-margin-top">
+                    <div class="uk-width-expand"><input class="uk-margin uk-input" name="invite_code" placeholder="Invite code"></div>
+                    <div class="uk-width-auto"><button type="submit" class="uk-button uk-button-primary">Join team</button></div>
+            </form>
+            {% endif %}
         </div></div>
     </div>
 </div>

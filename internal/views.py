@@ -5,6 +5,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from internal.models import *
 from internal.forms import ProfileForm
+import string
+import random
 
 # Create your views here.
 def index_view(request):
@@ -114,9 +116,54 @@ def teams_view(request):
     # sort in descending score
     teams_sorted = sorted(teams, key=lambda team: float(team['points']), reverse=True)
 
-    context = {'teams': teams_sorted}
-    print(teams)
+    team = request.user.profile.team
+    team_name = None if team == None else team.name
+    byte_invite_code = None
+    if request.user.profile.role == 'B' and team != None:
+        byte_invite_code = team.invite_code
+
+    context = {'teams': teams_sorted, 'role': request.user.profile.role, 'team_name': team_name, 'byte_invite_code': byte_invite_code}
     return render(request, 'internal/teams.html', context)
+
+def teams_create_view(request):
+    if not request.user.is_authenticated:
+        return redirect('%s?next=%s' % ('/login/', request.path))
+    elif request.user.profile.role != 'B':
+        return HttpResponseForbidden('<h1>Forbidden: Only bytes are allowed to create a team.</h1>')
+    elif request.user.profile.team != None:
+        return HttpResponseForbidden('<h1>Forbidden: User already has a team. Please contact an administrator to modify existing team assignments.</h1>')
+
+    name = request.POST.get('team_name')
+    if name == None or len(name) < 3:
+        return HttpResponse('<h1>Team name is too short.</h1>')
+
+    invite_code = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+    team = Team(name=name, invite_code=invite_code)
+    team.save()
+
+    request.user.profile.team = team
+    request.user.profile.save()
+
+    return redirect('/teams/')
+
+def teams_join_view(request):
+    if not request.user.is_authenticated:
+        return redirect('%s?next=%s' % ('/login/', request.path))
+    elif request.user.profile.team != None:
+        return HttpResponseForbidden('<h1>Forbidden: User already has a team. Please contact an administrator to modify existing team assignments.</h1>')
+
+    invite_code = request.POST.get('invite_code')
+    team = Team.objects.filter(invite_code=invite_code)
+
+    if not team.exists():
+        return HttpResponse('<h1>No team found.</h1>')
+    elif len(team) > 1:
+        return HttpResponse('<h1>Congratulate your byte on achieving a one-in-2176782336-chance key collision.</h1>')
+
+    request.user.profile.team = team[0]
+    request.user.profile.save()
+
+    return redirect('/teams/')
 
 def events_view(request):
     if not request.user.is_authenticated:
