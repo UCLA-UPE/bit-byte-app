@@ -136,3 +136,6 @@ MESSAGE_TAGS = {
     messages.WARNING: 'uk-text-warning',
     messages.ERROR: 'uk-text-danger',
 }
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 20000 # default: 1000
+DATA_UPLOAD_MAX_MEMORY_SIZE = 26214400 # default: 2621440 = 2.5 MB
