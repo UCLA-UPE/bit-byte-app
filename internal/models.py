@@ -84,8 +84,6 @@ class EventCategory(models.Model):
 class Event(models.Model):
     name = models.CharField(max_length=200)
     category = models.ForeignKey(EventCategory, blank=True, null=True, on_delete=models.SET_NULL)
-    repeatable = models.BooleanField(default=False)
-    points = models.IntegerField()
 
     def __str__(self):
         return '%s (category: %s)' % (self.name, self.category)
@@ -108,7 +106,6 @@ class EventCheckoff(models.Model):
     #     )
 
     person = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     event_completion = models.ForeignKey(EventCompletion, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
