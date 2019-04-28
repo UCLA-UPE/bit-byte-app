@@ -54,16 +54,16 @@ class Profile(models.Model):
     def points(self):
         points = 0.0
         # one-off events: points = worth * frac
-        events = Event.objects.all()
+        event_completions = EventCompletion.objects.all()
         checkoffs = EventCheckoff.objects.filter(person=self)
-        for event in events:
-            person_event = checkoffs.filter(event=event)
-            points_add = person_event.count() * event.points
-            if not event.repeatable:
+        for completion in event_completions:
+            person_event = checkoffs.filter(event_completion=completion)
+            points_add = person_event.count() * completion.points
+            if not completion.repeatable:
                 points_add /= self.team.members().count()
-                # one-off: check that there are no duplicates for the same event and person
+                # one-off completion type: check that there are no duplicates this person
                 if person_event.count() > 1:
-                    raise ValueError("Detected duplicate checkoffs for user [%s] in non-repeatable event [%s] when attempting to calculate points." % (self.user.username, event.name))
+                    raise ValueError("Detected duplicate checkoffs for user [%s] in non-repeatable event completion [%s] when attempting to calculate points." % (self.user.username, completion.name))
             points += points_add
         return points
 
