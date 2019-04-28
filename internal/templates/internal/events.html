@@ -20,8 +20,8 @@
                     <table class="uk-table">
                         <tr>
                             <td></td>
-                            {% for e in events %}
-                            <th scope="col">{{ e.name }}{% if e.category %} <span class="uk-text-warning">({{ e.category }})</span>{% endif %}</th>
+                            {% for e_id, ec in events_completions.items %}
+                            <th scope="col">{{ ec.event.name }}{% if ec.event.category %} <span class="uk-text-warning">({{ ec.event.category }})</span>{% endif %}</th>
                             {% endfor %}
                         </tr>
                         {% for team_id, team in teams.items %}
@@ -32,14 +32,20 @@
                         </tr>
                         {% for member in team.members %}
                         <tr>
-                            <th scope="row">{{ member.profile.user.first_name }} {{ member.profile.user.last_name }} ({{member.profile.user.email}})</th>
+                            <th scope="row">{{ member.profile.user.first_name }} {{ member.profile.user.last_name }}</th>
                             {% for c in member.checks %}
                             <td>
-                                <input type="hidden" name="cb_{{ member.profile.id }}_{{ c.event }}" value="0">
-                                {% if c.repeatable %}
-                                <input class="uk-input uk-form-small uk-form-width-xsmall" type="text" name="cb_{{ member.profile.id }}_{{ c.event }}" value="{{ c.count }}" {% if not editable %} disabled {% endif %} >
-                                {% else %}
-                                <input class="uk-checkbox" type="checkbox" name="cb_{{ member.profile.id }}_{{ c.event }}" value="1" {% if c.count %} checked {% endif %} {% if not editable %} disabled {% endif %} >
+                                <input type="hidden" name="cb_{{ member.profile.id }}_{{ c.event_id }}" value="0">
+                                {% if c.event_type == "select" %}
+                                <select class="uk-select" name="cb_{{ member.profile.id }}_{{ c.event_id }}" {% if not editable %} disabled {% endif %} >
+                                    {% for option in c.event_data.options %}
+                                    <option value={{ option.id }} {% if c.event_data.selected == option.id %} selected {% endif %}>{{ option.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% elif c.event_type == "repeatable" %}
+                                <input class="uk-input uk-form-small uk-form-width-xsmall" type="text" name="cb_{{ member.profile.id }}_{{ c.event_id }}" value="{{ c.event_data.count }}" {% if not editable %} disabled {% endif %} >
+                                {% elif c.event_type == "single" %}
+                                <input class="uk-checkbox" type="checkbox" name="cb_{{ member.profile.id }}_{{ c.event_id }}" value="1" {% if c.event_data.checked %} checked {% endif %} {% if not editable %} disabled {% endif %} >
                                 {% endif %}
                             </td>
                             {% endfor %}

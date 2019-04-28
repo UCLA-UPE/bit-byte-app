@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -183,29 +183,60 @@ def events_view(request):
         profiles = Profile.objects.filter(role__isnull=False, team=p.team)
 
     events = Event.objects.all().order_by('id')
+    completions = EventCompletion.objects.all()
     checkoffs = EventCheckoff.objects.all()
 
+    events_completions = {}
+
+    for event in events:
+        ec = {}
+        ec['event'] = event
+        ec['completions'] = completions.filter(event=event)
+
+        # determine event "type": single / repeatable / select
+        if ec['completions'].count() > 1:
+            ec['type'] = "select"
+        elif ec['completions'][0].repeatable:
+            ec['type'] = "repeatable"
+        else:
+            ec['type'] = "single"
+
+        events_completions[event.id] = ec
+
     teams = {}
-    for p in profiles:
+    for profile in profiles:
         checks = []
-        # all events for this person
-        for e in events:
-            count = checkoffs.filter(person=p, event=e).count()
-            checks.append({'repeatable': e.repeatable, 'count': count, 'event': e.id})
+        # all events for this person, along with their checkoff completion type, if any. (assume one completion type only)
+        for ec_id, ec in events_completions.items():
+            e_checkoffs = checkoffs.filter(person=profile, event_completion__in=ec['completions']) # all this person's checkoffs for this event
+
+            e_data = {}
+            if ec['type'] == "select":
+                e_data['options'] = [{'id': 0, 'name': ''}]
+                e_data['options'] += [{'id': c.id, 'name': c.name} for c in ec['completions']]
+                e_data['selected'] = 0 if not e_checkoffs.exists() else e_checkoffs[0].event_completion.id # assume max 1
+            elif ec['type'] == "repeatable":
+                e_data['count'] = e_checkoffs.count()
+            elif ec['type'] == "single":
+                e_data['checked'] = e_checkoffs.exists()
+
+            checks.append({'event_id': ec_id, 'event_type': ec['type'], 'event_data': e_data})
+
         # insert this person into a team
         # assign id=0 for teamless people
-        team_id = 0 if p.team == None else p.team.id
+        team_id = 0 if profile.team == None else profile.team.id
         # create dict entry if team does not exist
         if team_id not in teams:
-            teams[team_id] = {'team_name': '(Teamless)' if team_id == 0 else p.team.name, 'members': []}
-        # make sure bytes are first
-        if p.role == 'B':
-            teams[team_id]['members'] = [{'profile': p, 'checks': checks}] + teams[team_id]['members']
+            teams[team_id] = {'team_name': '(Teamless)' if team_id == 0 else profile.team.name, 'members': []}
+        # insert, making sure bytes are first
+        if profile.role == 'B':
+            teams[team_id]['members'] = [{'profile': profile, 'checks': checks}] + teams[team_id]['members']
         else:
-            teams[team_id]['members'].append({'profile': p, 'checks': checks})
+            teams[team_id]['members'].append({'profile': profile, 'checks': checks})
     
-    context = {'events': events, 'teams': teams, 'editable': editable}
+    context = {'events_completions': events_completions, 'teams': teams, 'editable': editable}
     return render(request, 'internal/events.html', context)
+    # return JsonResponse(context, safe=False)
 
 def events_submit_view(request):
     if not request.user.is_authenticated:
@@ -214,18 +245,46 @@ def events_submit_view(request):
     if not request.user.is_staff:
         return HttpResponseForbidden('<h1>Forbidden: User is not allowed to edit event checkoffs.</h1>')
 
+    checkoffs = EventCheckoff.objects.all()
+    completions = EventCompletion.objects.all()
+
+    # print(request.POST)
+
     for profile in Profile.objects.all():
         for event in Event.objects.all():
-            did_event_count = request.POST.get('cb_%s_%s' % (str(profile.id), str(event.id)))
-            if did_event_count == None:
+            pe_value = request.POST.get('cb_%s_%s' % (str(profile.id), str(event.id)))
+            if pe_value == None: # needed to skip profiles without a role, such as root
                 continue
-            did_event_count = int(did_event_count)
-            checkoffs = EventCheckoff.objects.filter(person=profile.id, event=event.id)
-            while checkoffs.count() < int(did_event_count): # create some checkoffs...
-                co = EventCheckoff(person=profile, event=event)
-                co.save()
-            while checkoffs.count() > int(did_event_count): # delete some checkoffs...
-                checkoffs[0].delete()
+            pe_value = int(pe_value) # might be checkoff count or completion id, depending on event type
+            pe_completions = completions.filter(event=event)
+            pe_checkoffs = checkoffs.filter(person=profile, event_completion__in=pe_completions)
+
+            # print(pe_checkoffs)
+
+            # determine event "type": single / repeatable / select
+            if pe_completions.count() > 1: # select
+                if not pe_checkoffs.exists() and pe_value == 0: # do nothing
+                    continue
+                elif pe_checkoffs.exists() and pe_value == 0: # want to remove
+                    print("event %s person %s: removing %s" % (event.name, profile.user.first_name, pe_checkoffs[0].event_completion.name))
+                    pe_checkoffs[0].delete()
+                elif not pe_checkoffs.exists() and pe_value != 0: # want to create
+                    print("event %s person %s: creating %s" % (event.name, profile.user.first_name, pe_completions.get(id=pe_value).name))
+                    co = EventCheckoff(person=profile, event_completion=pe_completions.get(id=pe_value))
+                    co.save()
+                elif pe_checkoffs[0].event_completion.id != pe_value: # want to change
+                    co = pe_checkoffs[0]
+                    print("event %s person %s: changing %s to %s" % (event.name, profile.user.first_name, pe_checkoffs[0].event_completion.name, pe_completions.get(id=pe_value).name))
+                    co.event_completion = pe_completions.get(id=pe_value)
+                    co.save()
+            else: # repeatable / single: assume only one completion kind
+                if pe_checkoffs.count() != pe_value:
+                    print("event %s person %s: updating count %s to match new value %s" % (event.name, profile.user.first_name, str(pe_checkoffs.count()), str(pe_value)))
+                while pe_checkoffs.count() < pe_value: # create some pe_checkoffs...
+                    co = EventCheckoff(person=profile, event_completion=pe_completions[0])
+                    co.save()
+                while pe_checkoffs.count() > pe_value: # delete some pe_checkoffs...
+                    pe_checkoffs[0].delete()
 
     messages.add_message(request, messages.SUCCESS, "Event checkoffs successfully updated.")
     return redirect('/events/')
