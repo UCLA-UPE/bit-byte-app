@@ -88,10 +88,16 @@ class Event(models.Model):
     points = models.IntegerField()
 
     def __str__(self):
-        if self.category is not None:
-            return '%s (%s, worth %s points)' % (self.name, self.category, self.points)
-        else:
-            return '%s (worth %s points)' % (self.name, self.points)
+        return '%s (category: %s)' % (self.name, self.category)
+
+class EventCompletion(models.Model):
+    name = models.CharField(max_length=200, default="Completion")
+    event = models.ForeignKey(Event, null=True, on_delete=models.CASCADE)
+    repeatable = models.BooleanField(default=False)
+    points = models.IntegerField()
+
+    def __str__(self):
+        return '[%s] for event %s, worth %s points' % (self.name, self.event, self.points)
 
 class EventCheckoff(models.Model):
 
@@ -103,9 +109,10 @@ class EventCheckoff(models.Model):
 
     person = models.ForeignKey(Profile, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    event_completion = models.ForeignKey(EventCompletion, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return '%s did %s' % (self.person, self.event)
+        return 'person %s achieved %s' % (self.person, self.event_completion)
 
 class Team(models.Model):
     name = models.CharField(max_length=200)
