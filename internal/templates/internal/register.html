@@ -1,13 +1,13 @@
 {% extends "internal/base.html" %}
 
-{% block nav-register %}<li class="uk-active"><a href="{% url 'register' %}">Register</a></li>{% endblock %}
+{% block nav-register %}<li class="uk-active"><a href="{% url 'bitbyte_register' %}">Register</a></li>{% endblock %}
 
 {% block content %}
 <div class="uk-container uk-container-small">
 
     <div class="uk-child-width-1-2@m uk-grid-medium uk-grid-match uk-flex-center" uk-grid>
         <div><div class="uk-card uk-card-default uk-card-body uk-margin-top">
-            <form action="{% url 'register_submit' %}" method="post">
+            <form action="{% url 'bitbyte_register_submit' %}" method="post">
             {% csrf_token %}
             <fieldset class="uk-fieldset">
             <legend class="uk-legend">Register</legend>

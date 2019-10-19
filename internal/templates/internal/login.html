@@ -1,6 +1,6 @@
 {% extends "internal/base.html" %}
 
-{% block nav-login %}<li class="uk-active"><a href="{% url 'login' %}">Login</a></li>{% endblock %}
+{% block nav-login %}<li class="uk-active"><a href="{% url 'bitbyte_login' %}">Login</a></li>{% endblock %}
 
 {% block content %}
 <div class="uk-container uk-container-small">
@@ -8,7 +8,7 @@
     <div class="uk-child-width-1-2@m uk-grid-medium uk-grid-match uk-flex-center" uk-grid>
         <div>
             <div class="uk-card uk-card-default uk-card-body uk-margin-top">
-                <form action="{% url 'login_submit' %}" method="post">
+                <form action="{% url 'bitbyte_login_submit' %}" method="post">
                     {% csrf_token %}
                     <fieldset class="uk-fieldset">
                     <legend class="uk-legend">Sign in to see team ranking, your points, and more!</legend>
@@ -23,7 +23,7 @@
                     </fieldset>
                     <input type="submit" class="uk-button uk-button-default" value="Login &rarrb;">
                 </form>
-                <div class="uk-margin"><a class="uk-text-small" href="{% url 'register' %}">Click here to register</a></div>
+                <div class="uk-margin"><a class="uk-text-small" href="{% url 'bitbyte_register' %}">Click here to register</a></div>
                 <div class="uk-margin"><a class="uk-text-small" href="{% url 'password_reset' %}">Forgot your password?</a></div>
             </div>
         </div>

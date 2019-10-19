@@ -1,0 +1,26 @@
+<!-- UIkit CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.8/css/uikit.min.css" />
+
+<!-- UIkit JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.8/js/uikit.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.8/js/uikit-icons.min.js"></script>
+
+<nav class="uk-navbar-container" uk-navbar>
+    <div class="uk-navbar-left">
+        <a class="uk-navbar-item uk-logo" href="{% url 'bitbyte_profile' %}">Bit-Byte Dashboard{% if user.is_authenticated %} &middot; {{ user.first_name }} {{ user.last_name }}{% endif %}</a>
+    </div>
+    <div class="uk-navbar-right">
+        <ul class="uk-navbar-nav">
+            {% block nav-profile %}<li><a href="{% url 'bitbyte_profile' %}">Profile</a></li>{% endblock %}
+            {% block nav-teams %}<li><a href="{% url 'bitbyte_teams' %}">Teams</a></li>{% endblock %}
+            {% block nav-events %}<li><a href="{% url 'bitbyte_events' %}">Events</a></li>{% endblock %}
+            {% block nav-challenge %}<li><a href="{% url 'wiki:root' %}">Challenge</a></li>{% endblock %}
+            {% if user.is_authenticated == False %}
+                {% block nav-register %}<li><a href="{% url 'bitbyte_register' %}">Register</a></li>{% endblock %}
+                {% block nav-login %}<li><a href="{% url 'bitbyte_login' %}">Login</a></li>{% endblock %}
+            {% else %}
+                {% block nav-logout %}<li><a href="{% url 'bitbyte_logout' %}">&larrb; Logout</a></li>{% endblock %}
+            {% endif %}
+        </ul>
+    </div>
+</nav>

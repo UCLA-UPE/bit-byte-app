@@ -1,6 +1,6 @@
 {% extends "internal/base.html" %}
 
-{% block nav-events %}<li class="uk-active"><a href="{% url 'events' %}">Events</a></li>{% endblock %}
+{% block nav-events %}<li class="uk-active"><a href="{% url 'bitbyte_events' %}">Events</a></li>{% endblock %}
 
 {% block content %}
 <div class="uk-container uk-container-large">
@@ -14,7 +14,7 @@
     <div class="uk-child-width-1-1@m uk-grid-medium uk-grid-match uk-flex uk-flex-column uk-flex-center uk-margin-top" uk-grid>
         <div><div class="uk-card uk-card-default uk-card-body">
             <h1>Events</h1>
-            <form action="{% url 'events_submit' %}" method="post">
+            <form action="{% url 'bitbyte_events_submit' %}" method="post">
                 {% csrf_token %}
                 <div class="uk-overflow-auto">
                     <table class="uk-table">
