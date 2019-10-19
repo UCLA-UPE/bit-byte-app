@@ -37,11 +37,11 @@ urlpatterns = [
     path('events/submit/', views.events_submit_view, name='bitbyte_events_submit'),
     # path('edit/', views.edit, name='edit'),
 
-    # # wiki
-    # path('admin/', admin.site.urls),
-    # # path('notifications/', include('django_nyt.urls')),
-    # # path('challenge/', include('wiki.urls')),
-    # path('challenge/', include('challenge.urls')),
-    # path('accounts/login/', RedirectView.as_view(url='/login/')),
+    # wiki
+    path('admin/', admin.site.urls),
+    # path('notifications/', include('django_nyt.urls')),
+    # path('challenge/', include('wiki.urls')),
+    path('challenge/', include('challenge.urls')),
+    path('accounts/login/', RedirectView.as_view(url='/login/')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

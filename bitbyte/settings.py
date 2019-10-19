@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import wiki
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # challenge
+    'challenge',
+
     # wiki
     'django.contrib.sites.apps.SitesConfig',
     'django.contrib.humanize.apps.HumanizeConfig',
@@ -152,3 +157,10 @@ MESSAGE_TAGS = {
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 20000 # default: 1000
 DATA_UPLOAD_MAX_MEMORY_SIZE = 26214400 # default: 2621440 = 2.5 MB
+
+# wiki
+SITE_ID = 1
+WIKI_ACCOUNT_HANDLING = False
+WIKI_ACCOUNT_SIGNUP_ALLOWED = False
+MEDIA_URL = '/media/'
+WIKI_ANONYMOUS = False
