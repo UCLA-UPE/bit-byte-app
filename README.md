@@ -1,7 +1,26 @@
 # bit-byte-app
 
 # Installation
-1. Make sure you have docker (with docker-compose installed)
+0. This should be run on an AWS instance. Options for creating a fresh dashboard: (1) create new aws instance, (2) remove everything from previous instance
+using ./manage.py dbshell after sshing to the web shell admin account (after step 2).
+
+Create new instance on AWS - can use free tier as of 4/16/2020. Expose 0.0.0.0/, ::00 for HTTP (80) and HTTPS (443) in security groups
+
+Install git on ec2:
+
+```
+sudo yum install git -y
+```
+
+Install docker, docker-compose on ec2:
+
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html
+```
+sudo curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-`uname -s`-`uname -m` | sudo tee /usr/local/bin/docker-compose > /dev/null
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+1. Make sure you have docker (with docker-compose installed) if you're doing it locally
 
 https://docs.docker.com/docker-for-mac/install/
 

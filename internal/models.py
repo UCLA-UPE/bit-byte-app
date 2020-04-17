@@ -33,7 +33,7 @@ class SiteSettings(SingletonModel):
     class Meta:
         verbose_name_plural = "Site Settings"
     byte_signup_pass = models.CharField(max_length=255, default="upe_byte")
-    bit_signup_pass = models.CharField(max_length=255, default="bits_2019")
+    bit_signup_pass = models.CharField(max_length=255, default="bits_2020")
 
 class Profile(models.Model):
     ROLE = (
